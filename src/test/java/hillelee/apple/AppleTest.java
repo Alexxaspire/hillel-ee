@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 public class AppleTest {
     @Test
     public void getterTest(){
-        new Apple().getColor();
+        new Apple("GREEN", 10).getColor();
     }
 
 }
