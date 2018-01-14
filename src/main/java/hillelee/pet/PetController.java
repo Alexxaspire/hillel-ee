@@ -1,8 +1,6 @@
 package hillelee.pet;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import hillelee.util.ErrorBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,12 +61,19 @@ public class PetController {
 
     @PostMapping("/pets")
     public ResponseEntity<Void> createPet(@RequestBody Pet pet) {
-        pets.put(++counter, pet);
-        return ResponseEntity.created(URI.create("/pets/" + counter)).build();
+
+        Integer id;
+
+        synchronized (this) {
+            id = ++counter;
+            pets.put(id, pet);
+        }
+
+        return ResponseEntity.created(URI.create("/pets/" + id)).build();
     }
 
     @PutMapping("/pets/{id}")
-    public void updatePet(@PathVariable Integer id,
+    public synchronized void updatePet(@PathVariable Integer id,
                           @RequestBody Pet pet) {
         pets.put(id, pet);
     }
@@ -87,22 +92,3 @@ public class PetController {
     }
 }
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class NoSuchPetException extends RuntimeException{
-}
-
-@Data
-@AllArgsConstructor
-class ErrorBody {
-    private final Integer code = 400;
-    private String message;
-}
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-class Pet {
-    private String name;
-    private String specie;
-    private Integer age;
-}
