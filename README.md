@@ -12,3 +12,6 @@ Site `start.spring.io`
 
 #browser link
 http://localhost:8080/GetMapping_value
+
+## JSON transformer
+Jackson
